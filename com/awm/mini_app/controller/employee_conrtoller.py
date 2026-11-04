@@ -58,8 +58,40 @@ class EmployeeController:
                 connection.close()
 
 
-def create_employee(self):
-    print('In create employee menu.')
+    def create_employee(self):
+        connection = None
+        cursor = None
+        try:
+            # 1. Establish the connection
+            connection = get_mysql_connection()
+            # 2. Create cursor object
+            cursor = connection.cursor()
+
+            firstname = input('Enter employee first name: ')
+            lastname = input('Enter employee last name: ')
+            city = input('Enter employee city: ')
+            designation = input('Enter employee designation: ')
+
+            query = 'Insert into employee(firstname, lastname, city, designation) values(%s, %s, %s, %s)'
+
+            # 3. Execute the SQL query
+            cursor.execute(query, [firstname, lastname, city, designation])
+            affected_rows = cursor.rowcount
+
+            # 4. Commit
+            connection.commit()
+            if affected_rows == 1:
+                print('Employee successfully created.')
+
+        except Error as error:
+            print(f'Error: {error}')
+
+        finally:
+            if cursor is not None:
+                cursor.close()
+
+            if connection is not None:
+                connection.close()
 
 
 def update_employee(self):
