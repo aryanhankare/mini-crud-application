@@ -94,13 +94,58 @@ class EmployeeController:
                 connection.close()
 
 
-def update_employee(self):
-    print('In update employee menu.')
+    def update_employee(self):
+        connection = None
+        cursor = None
+        try:
+            connection = get_mysql_connection()
+            cursor = connection.cursor()
+            firstname = input('Update employee first name: ')
+            lastname = input('Update employee last name: ')
+            city = input('Update employee city: ')
+            designation = input('Update employee designation: ')
+            query = 'update employee set firstname = %s, lastname = %s, city = %s, designation = %s where employee_id = %s'
+            employee_id: int = int(input('Enter employee id: '))
+            cursor.execute(query, [firstname, lastname, city, designation, employee_id])
+            affected_rows = cursor.rowcount
+            connection.commit()
+            if affected_rows > 0:
+                print(f'Employee ID : {employee_id} updated successfully')
+
+        except Error as error:
+            print(f'Error: {error}')
+        except ValueError as error:
+            print('Invalid employee id')
+        finally:
+            if cursor is not None:
+                cursor.close()
+            if connection is not None:
+                connection.close()
 
 
-def delete_employee(self):
-    print('In delete employee menu.')
+    def delete_employee(self):
+        connection = None
+        cursor = None
+        try:
+            connection = get_mysql_connection()
+            cursor = connection.cursor()
+            query = 'delete from employee where employee_id = %s'
+            employee_id:int = int(input('Enter employee id: '))
+            cursor.execute(query, [employee_id])
+            affected_rows = cursor.rowcount
+            connection.commit()
+            if affected_rows > 0:
+                print(f'Employee ID : {employee_id} deleted successfully')
 
+        except Error as error:
+            print(f'Error: {error}')
+        except ValueError as error:
+            print('Invalid employee id')
+        finally:
+            if cursor is not None:
+                cursor.close()
+            if connection is not None:
+                connection.close()
 
 controller = EmployeeController()
 controller.display_all_menu()
