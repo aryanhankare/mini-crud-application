@@ -9,8 +9,8 @@ A simple record of what has been added to the Mini CRUD Application. Update this
 - [x] MySQL connection helper added.
 - [x] Display employee records implemented.
 - [x] Create employee method added (latest update: 4 Nov 2026).
-- [ ] Update employee functionality.
-- [ ] Delete employee functionality.
+- [x] Update employee functionality.
+- [x] Delete employee functionality.
 - [ ] Connect the application properly through `main.py`.
 - [ ] Move database credentials to environment variables.
 
@@ -21,6 +21,7 @@ A simple record of what has been added to the Mini CRUD Application. Update this
 | 3 Nov 2026 | Initial project structure and Python/MySQL setup pushed to GitHub. |
 | 3 Nov 2026 | Added the project README. |
 | 4 Nov 2026 | Added the create employee method with parameterized SQL, commit, and cursor/connection cleanup. |
+| 5 Nov 2026 | Added the update employee details & delete employee methods with parameterized SQL, commit, and cursor/connection cleanup. |
 
 ## Notes
 
