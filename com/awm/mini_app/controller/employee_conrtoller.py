@@ -12,6 +12,7 @@ class EmployeeController:
                 print('\t2. Create Employee Details')
                 print('\t3. Update Employee Details')
                 print('\t4. Delete Employee Details')
+                print('\t5. Search Employee Details')
 
                 choice: int = int(input('Enter your choice: '))
                 match choice:
@@ -23,8 +24,10 @@ class EmployeeController:
                         self.update_employee()
                     case 4:
                         self.delete_employee()
+                    case 5:
+                        self.search_employee()
                     case _:
-                        print('Enter your choice from 1 to 4, exiting the menu.')
+                        print('Enter your choice from 1 to 5, exiting the menu.')
                         break
             except ValueError:
                 print('Invalid choice, exiting the menu.')
@@ -147,5 +150,30 @@ class EmployeeController:
             if connection is not None:
                 connection.close()
 
-controller = EmployeeController()
-controller.display_all_menu()
+    def search_employee(self):
+        connection = None
+        cursor = None
+        try:
+            connection = get_mysql_connection()
+            cursor = connection.cursor()
+            query = 'select * from employee where employee_id = %s'
+            employee_id:int = int(input('Enter employee id: '))
+            cursor.execute(query, [employee_id])
+            row = cursor.fetchone()
+            if row is not None:
+                employee = (Employee(employee_id=row[0], firstname=row[1], lastname=row[2], city=row[3],
+                                     designation=row[4]))
+                print(f"{'Employee ID':<15} {'First Name':<15} {'Last Name':<15} {'City':<15} {'Designation':<15}")
+                print(employee)
+            else:
+                print(f'Employee ID : {employee_id} not found')
+
+        except Error as error:
+            print(f'Error: {error}')
+        except ValueError as error:
+            print('Invalid employee id')
+        finally:
+            if cursor is not None:
+                cursor.close()
+            if connection is not None:
+                connection.close()
