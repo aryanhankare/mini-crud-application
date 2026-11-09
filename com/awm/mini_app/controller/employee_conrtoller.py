@@ -36,20 +36,29 @@ class EmployeeController:
     def get_all_employee(self):
         connection = None
         cursor = None
+
         try:
             connection = get_mysql_connection()
-            if connection is not None:
-                # 2. Create cursor object
-                cursor = connection.cursor()
-                # 3. Execute the SQL query
-                cursor.execute('select * from employee')
-                # 4. Fetch the data
-                rows = cursor.fetchall()
-                print(f"{'Employee ID':<15} {'First Name':<15} {'Last Name':<15} {'City':<15} {'Designation':<15}")
-                for row in rows:
-                    employee = (Employee(employee_id=row[0], firstname=row[1], lastname=row[2], city=row[3],
-                                         designation=row[4]))
-                    print(employee)
+
+            if connection is None:
+                print("Unable to connect to database. Please try again.")
+                return
+
+            cursor = connection.cursor()
+            cursor.execute('select * from employee')
+            rows = cursor.fetchall()
+
+            print(f"{'Employee ID':<15} {'First Name':<15} {'Last Name':<15} {'City':<15} {'Designation':<15}")
+
+            for row in rows:
+                employee = Employee(
+                    employee_id=row[0],
+                    firstname=row[1],
+                    lastname=row[2],
+                    city=row[3],
+                    designation=row[4]
+                )
+                print(employee)
 
         except Error as error:
             print(f'Error: {error}')
@@ -57,17 +66,21 @@ class EmployeeController:
         finally:
             if cursor is not None:
                 cursor.close()
+
             if connection is not None:
                 connection.close()
-
 
     def create_employee(self):
         connection = None
         cursor = None
+
         try:
-            # 1. Establish the connection
             connection = get_mysql_connection()
-            # 2. Create cursor object
+
+            if connection is None:
+                print("Unable to connect to database. Please try again.")
+                return
+
             cursor = connection.cursor()
 
             firstname = input('Enter employee first name: ')
@@ -75,14 +88,16 @@ class EmployeeController:
             city = input('Enter employee city: ')
             designation = input('Enter employee designation: ')
 
-            query = 'Insert into employee(firstname, lastname, city, designation) values(%s, %s, %s, %s)'
+            query = '''
+                INSERT INTO employee(firstname, lastname, city, designation)
+                VALUES(%s, %s, %s, %s)
+            '''
 
-            # 3. Execute the SQL query
             cursor.execute(query, [firstname, lastname, city, designation])
-            affected_rows = cursor.rowcount
 
-            # 4. Commit
+            affected_rows = cursor.rowcount
             connection.commit()
+
             if affected_rows == 1:
                 print('Employee successfully created.')
 
@@ -100,80 +115,133 @@ class EmployeeController:
     def update_employee(self):
         connection = None
         cursor = None
+
         try:
             connection = get_mysql_connection()
+
+            if connection is None:
+                print("Unable to connect to database. Please try again.")
+                return
+
             cursor = connection.cursor()
+
             firstname = input('Update employee first name: ')
             lastname = input('Update employee last name: ')
             city = input('Update employee city: ')
             designation = input('Update employee designation: ')
-            query = 'update employee set firstname = %s, lastname = %s, city = %s, designation = %s where employee_id = %s'
-            employee_id: int = int(input('Enter employee id: '))
+            employee_id = int(input('Enter employee id: '))
+
+            query = '''
+                UPDATE employee
+                SET firstname = %s, lastname = %s, city = %s, designation = %s
+                WHERE employee_id = %s
+            '''
+
             cursor.execute(query, [firstname, lastname, city, designation, employee_id])
+
             affected_rows = cursor.rowcount
             connection.commit()
+
             if affected_rows > 0:
-                print(f'Employee ID : {employee_id} updated successfully')
+                print(f'Employee ID: {employee_id} updated successfully')
+            else:
+                print(f'Employee ID: {employee_id} not found')
 
         except Error as error:
             print(f'Error: {error}')
-        except ValueError as error:
+
+        except ValueError:
             print('Invalid employee id')
+
         finally:
             if cursor is not None:
                 cursor.close()
+
             if connection is not None:
                 connection.close()
-
 
     def delete_employee(self):
         connection = None
         cursor = None
+
         try:
             connection = get_mysql_connection()
+
+            if connection is None:
+                print("Unable to connect to database. Please try again.")
+                return
+
             cursor = connection.cursor()
-            query = 'delete from employee where employee_id = %s'
-            employee_id:int = int(input('Enter employee id: '))
+
+            employee_id = int(input('Enter employee id: '))
+
+            query = 'DELETE FROM employee WHERE employee_id = %s'
             cursor.execute(query, [employee_id])
+
             affected_rows = cursor.rowcount
             connection.commit()
+
             if affected_rows > 0:
-                print(f'Employee ID : {employee_id} deleted successfully')
+                print(f'Employee ID: {employee_id} deleted successfully')
+            else:
+                print(f'Employee ID: {employee_id} not found')
 
         except Error as error:
             print(f'Error: {error}')
-        except ValueError as error:
+
+        except ValueError:
             print('Invalid employee id')
+
         finally:
             if cursor is not None:
                 cursor.close()
+
             if connection is not None:
                 connection.close()
 
     def search_employee(self):
         connection = None
         cursor = None
+
         try:
             connection = get_mysql_connection()
+
+            if connection is None:
+                print("Unable to connect to database. Please try again.")
+                return
+
             cursor = connection.cursor()
-            query = 'select * from employee where employee_id = %s'
-            employee_id:int = int(input('Enter employee id: '))
+
+            employee_id = int(input('Enter employee id: '))
+
+            query = 'SELECT * FROM employee WHERE employee_id = %s'
             cursor.execute(query, [employee_id])
+
             row = cursor.fetchone()
+
             if row is not None:
-                employee = (Employee(employee_id=row[0], firstname=row[1], lastname=row[2], city=row[3],
-                                     designation=row[4]))
+                employee = Employee(
+                    employee_id=row[0],
+                    firstname=row[1],
+                    lastname=row[2],
+                    city=row[3],
+                    designation=row[4]
+                )
+
                 print(f"{'Employee ID':<15} {'First Name':<15} {'Last Name':<15} {'City':<15} {'Designation':<15}")
                 print(employee)
             else:
-                print(f'Employee ID : {employee_id} not found')
+                print(f'Employee ID: {employee_id} not found')
 
         except Error as error:
             print(f'Error: {error}')
-        except ValueError as error:
+
+        except ValueError:
             print('Invalid employee id')
+
         finally:
             if cursor is not None:
                 cursor.close()
+
             if connection is not None:
                 connection.close()
