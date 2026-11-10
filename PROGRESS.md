@@ -20,12 +20,19 @@ A running record of completed features, improvements, and next steps for the Min
 - [x] Remove the module-level connection call so importing the MySQL utility module does not open a database connection.
 - [x] Handle failed database connections consistently in all CRUD and search methods.
 - [x] Run all menu options successfully after the connection-handling changes.
+- [x] Add menu input validation for non-integer input and invalid menu choices.
+- [x] Add `pytest` as a development dependency.
+- [x] Add automated tests for menu behavior and database operations using mocks.
+- [x] Test database-failure handling explicitly without requiring a live database.
 - [x] Verify Python syntax using `python -m compileall main.py com`.
+- [x] Run the automated test suite successfully: **6 tests passed** using `uv run python -m pytest -v`.
 
 ### Pending Improvements
-- [ ] Improve menu input validation so invalid choices show an error and let the user try again.
-- [ ] Add automated tests for application logic.
-- [ ] Test database-failure handling explicitly.
+- [ ] Add tests for employee update, deletion, and search operations.
+- [ ] Add tests for not-found cases and invalid employee IDs.
+- [ ] Improve validation for blank employee fields and non-positive IDs.
+- [ ] Review repeated database connection and cleanup code for a possible refactor.
+- [ ] Improve the README with setup, configuration, and testing instructions.
 
 ## Progress Log
 
@@ -40,11 +47,15 @@ A running record of completed features, improvements, and next steps for the Min
 | 8 Nov 2026 | Moved MySQL credentials into environment variables using `python-dotenv`, added `.env.example`, updated `.gitignore`, and removed the automatic connection call during module import. |
 | 8 Nov 2026 | Verified that the application connects to MySQL and displays employee records using the new environment-based configuration. |
 | 9 Nov 2026 | Added consistent database connection checks to all five CRUD/search methods, compiled the Python files successfully, and tested all menu options. |
+| 10 Nov 2026 | Added menu input validation and introduced `pytest` for automated testing. |
+| 10 Nov 2026 | Added six tests covering menu input, menu dispatch, employee creation, unavailable database handling, and fetching employee records. All six tests passed. |
 
 ## Notes
 
-- All five CRUD/search menu operations were run successfully after the environment-based database configuration and connection-handling changes.
-- Database connection failures are now checked before attempting to create a cursor in each database method.
+- The current automated tests use mocked database connections, so they do not need a running MySQL server.
+- Run the test suite with `uv run python -m pytest -v`.
+- Use `uv run python -m pytest -v` rather than `uv run pytest -v` in this project so the project root is available for imports.
+- Database connection failures are checked before attempting to create a cursor in each database method.
 - SQL values are passed separately from query strings using parameterized queries.
 - Keep the local `.env` file private and never commit it. Commit `.env.example` instead.
 - If real database credentials were committed publicly in earlier commits, rotate them. Removing credentials in a later commit does not erase them from Git history.
