@@ -6,15 +6,17 @@ from com.awm.mini_app.util.my_sql_connection import get_mysql_connection
 class EmployeeController:
     def display_all_menu(self):
         while True:
-            try:
-                print('\n****Menu****')
-                print('\t1. Display Employee Details')
-                print('\t2. Create Employee Details')
-                print('\t3. Update Employee Details')
-                print('\t4. Delete Employee Details')
-                print('\t5. Search Employee Details')
+            print('\n****Menu****')
+            print('\t1. Display Employee Details')
+            print('\t2. Create Employee Details')
+            print('\t3. Update Employee Details')
+            print('\t4. Delete Employee Details')
+            print('\t5. Search Employee Details')
+            print('\t6. Exit')
 
+            try:
                 choice: int = int(input('Enter your choice: '))
+
                 match choice:
                     case 1:
                         self.get_all_employee()
@@ -26,12 +28,14 @@ class EmployeeController:
                         self.delete_employee()
                     case 5:
                         self.search_employee()
-                    case _:
-                        print('Enter your choice from 1 to 5, exiting the menu.')
+                    case 6:
+                        print('Exiting the application.')
                         break
+                    case _:
+                        print('Invalid choice. Please enter a number from 1 to 6.')
+
             except ValueError:
-                print('Invalid choice, exiting the menu.')
-                break
+                print('Invalid input. Please enter a valid number.')
 
     def get_all_employee(self):
         connection = None
