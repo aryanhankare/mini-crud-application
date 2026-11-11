@@ -1,9 +1,45 @@
+
 from mysql.connector.errors import Error
 from com.awm.mini_app.model.employee import Employee
 from com.awm.mini_app.util.my_sql_connection import get_mysql_connection
 
 
 class EmployeeController:
+
+    def get_connection(self):
+        connection = get_mysql_connection()
+
+        if connection is None:
+            print("Unable to connect to database. Please try again.")
+
+        return connection
+
+    def close_connection(self, cursor, connection):
+        if cursor is not None:
+            cursor.close()
+
+        if connection is not None:
+            connection.close()
+
+    def display_employee(self, row):
+        employee = Employee(
+            employee_id=row[0],
+            firstname=row[1],
+            lastname=row[2],
+            city=row[3],
+            designation=row[4]
+        )
+        print(employee)
+
+    def display_employee_header(self):
+        print(
+            f"{'Employee ID':<15} "
+            f"{'First Name':<15} "
+            f"{'Last Name':<15} "
+            f"{'City':<15} "
+            f"{'Designation':<15}"
+        )
+
     def display_all_menu(self):
         while True:
             print('\n****Menu****')
@@ -15,7 +51,7 @@ class EmployeeController:
             print('\t6. Exit')
 
             try:
-                choice: int = int(input('Enter your choice: '))
+                choice = int(input('Enter your choice: '))
 
                 match choice:
                     case 1:
@@ -42,47 +78,34 @@ class EmployeeController:
         cursor = None
 
         try:
-            connection = get_mysql_connection()
+            connection = self.get_connection()
 
             if connection is None:
-                print("Unable to connect to database. Please try again.")
                 return
 
             cursor = connection.cursor()
             cursor.execute('select * from employee')
             rows = cursor.fetchall()
 
-            print(f"{'Employee ID':<15} {'First Name':<15} {'Last Name':<15} {'City':<15} {'Designation':<15}")
+            self.display_employee_header()
 
             for row in rows:
-                employee = Employee(
-                    employee_id=row[0],
-                    firstname=row[1],
-                    lastname=row[2],
-                    city=row[3],
-                    designation=row[4]
-                )
-                print(employee)
+                self.display_employee(row)
 
         except Error as error:
             print(f'Error: {error}')
 
         finally:
-            if cursor is not None:
-                cursor.close()
-
-            if connection is not None:
-                connection.close()
+            self.close_connection(cursor, connection)
 
     def create_employee(self):
         connection = None
         cursor = None
 
         try:
-            connection = get_mysql_connection()
+            connection = self.get_connection()
 
             if connection is None:
-                print("Unable to connect to database. Please try again.")
                 return
 
             cursor = connection.cursor()
@@ -109,22 +132,16 @@ class EmployeeController:
             print(f'Error: {error}')
 
         finally:
-            if cursor is not None:
-                cursor.close()
-
-            if connection is not None:
-                connection.close()
-
+            self.close_connection(cursor, connection)
 
     def update_employee(self):
         connection = None
         cursor = None
 
         try:
-            connection = get_mysql_connection()
+            connection = self.get_connection()
 
             if connection is None:
-                print("Unable to connect to database. Please try again.")
                 return
 
             cursor = connection.cursor()
@@ -141,7 +158,10 @@ class EmployeeController:
                 WHERE employee_id = %s
             '''
 
-            cursor.execute(query, [firstname, lastname, city, designation, employee_id])
+            cursor.execute(
+                query,
+                [firstname, lastname, city, designation, employee_id]
+            )
 
             affected_rows = cursor.rowcount
             connection.commit()
@@ -158,21 +178,16 @@ class EmployeeController:
             print('Invalid employee id')
 
         finally:
-            if cursor is not None:
-                cursor.close()
-
-            if connection is not None:
-                connection.close()
+            self.close_connection(cursor, connection)
 
     def delete_employee(self):
         connection = None
         cursor = None
 
         try:
-            connection = get_mysql_connection()
+            connection = self.get_connection()
 
             if connection is None:
-                print("Unable to connect to database. Please try again.")
                 return
 
             cursor = connection.cursor()
@@ -197,21 +212,16 @@ class EmployeeController:
             print('Invalid employee id')
 
         finally:
-            if cursor is not None:
-                cursor.close()
-
-            if connection is not None:
-                connection.close()
+            self.close_connection(cursor, connection)
 
     def search_employee(self):
         connection = None
         cursor = None
 
         try:
-            connection = get_mysql_connection()
+            connection = self.get_connection()
 
             if connection is None:
-                print("Unable to connect to database. Please try again.")
                 return
 
             cursor = connection.cursor()
@@ -224,16 +234,8 @@ class EmployeeController:
             row = cursor.fetchone()
 
             if row is not None:
-                employee = Employee(
-                    employee_id=row[0],
-                    firstname=row[1],
-                    lastname=row[2],
-                    city=row[3],
-                    designation=row[4]
-                )
-
-                print(f"{'Employee ID':<15} {'First Name':<15} {'Last Name':<15} {'City':<15} {'Designation':<15}")
-                print(employee)
+                self.display_employee_header()
+                self.display_employee(row)
             else:
                 print(f'Employee ID: {employee_id} not found')
 
@@ -244,8 +246,4 @@ class EmployeeController:
             print('Invalid employee id')
 
         finally:
-            if cursor is not None:
-                cursor.close()
-
-            if connection is not None:
-                connection.close()
+            self.close_connection(cursor, connection)
