@@ -144,3 +144,178 @@ def test_get_all_employee(monkeypatch, capsys):
 
     fake_cursor.close.assert_called_once()
     fake_connection.close.assert_called_once()
+
+def test_update_employee(monkeypatch, capsys):
+    fake_connection = MagicMock()
+    fake_cursor = MagicMock()
+
+    fake_connection.cursor.return_value = fake_cursor
+    fake_cursor.rowcount = 1
+
+    monkeypatch.setattr(
+        employee_conrtoller,
+        "get_mysql_connection",
+        lambda: fake_connection
+    )
+
+    inputs = iter(["Aryan", "Hankare", "Mumbai", "Developer", "1"])
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+
+    controller = employee_conrtoller.EmployeeController()
+    controller.update_employee()
+
+    # Check SQL execution
+    fake_cursor.execute.assert_called_once()
+
+    # Check values passed to SQL
+    args = fake_cursor.execute.call_args[0]
+    assert args[1] == ["Aryan", "Hankare", "Mumbai", "Developer", 1]
+
+    # Check transaction
+    fake_connection.commit.assert_called_once()
+
+    # Check cleanup
+    fake_cursor.close.assert_called_once()
+    fake_connection.close.assert_called_once()
+
+    # Check output
+    output = capsys.readouterr().out
+    assert "updated successfully" in output
+
+def test_delete_employee(monkeypatch, capsys):
+    fake_connection = MagicMock()
+    fake_cursor = MagicMock()
+
+    fake_connection.cursor.return_value = fake_cursor
+    fake_cursor.rowcount = 1
+
+    monkeypatch.setattr(
+        employee_conrtoller,
+        "get_mysql_connection",
+        lambda: fake_connection
+    )
+
+    inputs = iter(["1"])
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+
+    controller = employee_conrtoller.EmployeeController()
+    controller.delete_employee()
+
+    # Check SQL execution
+    fake_cursor.execute.assert_called_once()
+
+    # Check employee ID passed to SQL
+    args = fake_cursor.execute.call_args[0]
+    assert args[1] == [1]
+
+    # Check transaction
+    fake_connection.commit.assert_called_once()
+
+    # Check cleanup
+    fake_cursor.close.assert_called_once()
+    fake_connection.close.assert_called_once()
+
+    # Check output
+    output = capsys.readouterr().out
+    assert "deleted successfully" in output
+
+def test_search_employee(monkeypatch, capsys):
+    fake_connection = MagicMock()
+    fake_cursor = MagicMock()
+
+    fake_connection.cursor.return_value = fake_cursor
+    fake_cursor.fetchone.return_value = (
+        1, "Aryan", "Hankare", "Kolhapur", "Developer"
+    )
+
+    monkeypatch.setattr(
+        employee_conrtoller,
+        "get_mysql_connection",
+        lambda: fake_connection
+    )
+
+    inputs = iter(["1"])
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+
+    controller = employee_conrtoller.EmployeeController()
+    controller.search_employee()
+
+    # Check SQL execution
+    fake_cursor.execute.assert_called_once()
+
+    # Check employee ID
+    args = fake_cursor.execute.call_args[0]
+    assert args[1] == [1]
+
+    # Check result
+    output = capsys.readouterr().out
+    assert "Aryan" in output
+
+    # Check cleanup
+    fake_cursor.close.assert_called_once()
+    fake_connection.close.assert_called_once()
+
+def test_search_employee_not_found(monkeypatch, capsys):
+    fake_connection = MagicMock()
+    fake_cursor = MagicMock()
+
+    fake_connection.cursor.return_value = fake_cursor
+    fake_cursor.fetchone.return_value = None
+
+    monkeypatch.setattr(
+        employee_conrtoller,
+        "get_mysql_connection",
+        lambda: fake_connection
+    )
+
+    inputs = iter(["999"])
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+
+    controller = employee_conrtoller.EmployeeController()
+    controller.search_employee()
+
+    # Check SQL parameter
+    args = fake_cursor.execute.call_args[0]
+    assert args[1] == [999]
+
+    # Check not-found message
+    output = capsys.readouterr().out
+    assert "not found" in output.lower()
+
+    # Check cleanup
+    fake_cursor.close.assert_called_once()
+    fake_connection.close.assert_called_once()
+
+def test_delete_employee_not_found(monkeypatch, capsys):
+    fake_connection = MagicMock()
+    fake_cursor = MagicMock()
+
+    fake_connection.cursor.return_value = fake_cursor
+    fake_cursor.rowcount = 0
+
+    monkeypatch.setattr(
+        employee_conrtoller,
+        "get_mysql_connection",
+        lambda: fake_connection
+    )
+
+    inputs = iter(["999"])
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+
+    controller = employee_conrtoller.EmployeeController()
+    controller.delete_employee()
+
+    # Check employee ID
+    args = fake_cursor.execute.call_args[0]
+    assert args[1] == [999]
+
+    # Check transaction
+    fake_connection.commit.assert_called_once()
+
+    # Check output
+    output = capsys.readouterr().out
+    assert "not found" in output.lower()
+
+    # Check cleanup
+    fake_cursor.close.assert_called_once()
+    fake_connection.close.assert_called_once()
