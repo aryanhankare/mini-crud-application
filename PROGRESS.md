@@ -29,11 +29,13 @@ A running record of completed features, improvements, and next steps for the Min
 - [x] Refactored the employee controller to reuse connection, cleanup, and employee-display methods.
 - [x] Improved README setup, database configuration, and test instructions.
 - [x] Verified the complete test suite: **14 tests passed** using `uv run python -m pytest -v`.
+- [x] Merged employee input validation and its tests into `main` through Pull Request #1.
+- [x] Pulled the merge into the local `main` branch and verified all 14 tests pass on `main`.
+- [x] Confirmed local `main` is synced with `origin/main` and the working tree is clean.
 
 ### Pending Improvements
 - [ ] Add tests for database errors during SQL execution.
 - [ ] Consider integration tests using a separate test database.
-- [ ] Review the feature branch and open a pull request into `main`.
 
 ## Progress Log
 
@@ -51,6 +53,7 @@ A running record of completed features, improvements, and next steps for the Min
 | 11 Nov 2026 | Refactored the controller to reuse database connection, resource cleanup, and employee display methods. All 11 tests passed. |
 | 12 Nov 2026 | Added reusable validation for blank employee fields and positive employee IDs. Applied it to create, update, delete, and search operations. Existing test suite passed: 11 tests. |
 | 13 Nov 2026 | Added dedicated tests for blank/whitespace-only text input, invalid employee IDs, and update-not-found behavior. Full test suite passed: 14 tests. Committed and pushed the test updates to `feature/employee-input-validation`. |
+| 14 Nov 2026 | Opened and merged Pull Request #1, **Add employee input validation and tests**, into `main`. Updated local `main`, ran the full test suite successfully (14 passed), and confirmed the working tree is clean. |
 
 ## Notes
 
