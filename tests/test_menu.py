@@ -319,3 +319,56 @@ def test_delete_employee_not_found(monkeypatch, capsys):
     # Check cleanup
     fake_cursor.close.assert_called_once()
     fake_connection.close.assert_called_once()
+
+def test_get_valid_input_rejects_empty_input(monkeypatch, capsys):
+    controller = EmployeeController()
+
+    inputs = iter(["", "   ", "Aaryan"])
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+
+    result = controller.get_valid_input("Enter name: ")
+
+    output = capsys.readouterr().out
+
+    assert result == "Aaryan"
+    assert output.count("This field cannot be empty.") == 2
+
+def test_get_valid_id_rejects_invalid_ids(monkeypatch, capsys):
+    controller = EmployeeController()
+
+    inputs = iter(["abc", "0", "-5", "12"])
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+
+    result = controller.get_valid_id("Enter ID: ")
+
+    output = capsys.readouterr().out
+
+    assert result == 12
+    assert "Invalid input. Please enter a numeric ID." in output
+    assert "Employee ID must be greater than zero." in output
+
+def test_update_employee_not_found(monkeypatch, capsys):
+    fake_connection = MagicMock()
+    fake_cursor = MagicMock()
+
+    fake_connection.cursor.return_value = fake_cursor
+    fake_cursor.rowcount = 0
+
+    monkeypatch.setattr(
+        employee_conrtoller,
+        "get_mysql_connection",
+        lambda: fake_connection
+    )
+
+    inputs = iter(["Aryan", "Hankare", "Mumbai", "Developer", "999"])
+    monkeypatch.setattr("builtins.input", lambda _: next(inputs))
+
+    controller = employee_conrtoller.EmployeeController()
+    controller.update_employee()
+
+    output = capsys.readouterr().out
+
+    assert "Employee ID: 999 not found" in output
+    fake_connection.commit.assert_called_once()
+    fake_cursor.close.assert_called_once()
+    fake_connection.close.assert_called_once()

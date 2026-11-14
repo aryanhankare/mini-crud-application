@@ -21,6 +21,28 @@ class EmployeeController:
         if connection is not None:
             connection.close()
 
+    def get_valid_input(self, message):
+        while True:
+            value = input(message).strip()
+
+            if value:
+                return value
+
+            print("This field cannot be empty. Please try again.")
+
+    def get_valid_id(self, message):
+        while True:
+            try:
+                employee_id = int(input(message))
+
+                if employee_id > 0:
+                    return employee_id
+
+                print("Employee ID must be greater than zero.")
+
+            except ValueError:
+                print("Invalid input. Please enter a numeric ID.")
+
     def display_employee(self, row):
         employee = Employee(
             employee_id=row[0],
@@ -110,10 +132,10 @@ class EmployeeController:
 
             cursor = connection.cursor()
 
-            firstname = input('Enter employee first name: ')
-            lastname = input('Enter employee last name: ')
-            city = input('Enter employee city: ')
-            designation = input('Enter employee designation: ')
+            firstname = self.get_valid_input('Enter employee first name: ')
+            lastname = self.get_valid_input('Enter employee last name: ')
+            city = self.get_valid_input('Enter employee city: ')
+            designation = self.get_valid_input('Enter employee designation: ')
 
             query = '''
                 INSERT INTO employee(firstname, lastname, city, designation)
@@ -144,13 +166,15 @@ class EmployeeController:
             if connection is None:
                 return
 
-            cursor = connection.cursor()
 
-            firstname = input('Update employee first name: ')
-            lastname = input('Update employee last name: ')
-            city = input('Update employee city: ')
-            designation = input('Update employee designation: ')
-            employee_id = int(input('Enter employee id: '))
+            firstname = self.get_valid_input('Update employee first name: ')
+            lastname = self.get_valid_input('Update employee last name: ')
+            city = self.get_valid_input('Update employee city: ')
+            designation = self.get_valid_input('Update employee designation: ')
+
+            employee_id = self.get_valid_id('Enter employee id to update: ')
+
+            cursor = connection.cursor()
 
             query = '''
                 UPDATE employee
@@ -174,8 +198,6 @@ class EmployeeController:
         except Error as error:
             print(f'Error: {error}')
 
-        except ValueError:
-            print('Invalid employee id')
 
         finally:
             self.close_connection(cursor, connection)
@@ -192,7 +214,7 @@ class EmployeeController:
 
             cursor = connection.cursor()
 
-            employee_id = int(input('Enter employee id: '))
+            employee_id = self.get_valid_id('Enter employee id to delete: ')
 
             query = 'DELETE FROM employee WHERE employee_id = %s'
             cursor.execute(query, [employee_id])
@@ -207,9 +229,6 @@ class EmployeeController:
 
         except Error as error:
             print(f'Error: {error}')
-
-        except ValueError:
-            print('Invalid employee id')
 
         finally:
             self.close_connection(cursor, connection)
@@ -226,7 +245,7 @@ class EmployeeController:
 
             cursor = connection.cursor()
 
-            employee_id = int(input('Enter employee id: '))
+            employee_id = self.get_valid_id('Enter employee id to search: ')
 
             query = 'SELECT * FROM employee WHERE employee_id = %s'
             cursor.execute(query, [employee_id])
@@ -241,9 +260,6 @@ class EmployeeController:
 
         except Error as error:
             print(f'Error: {error}')
-
-        except ValueError:
-            print('Invalid employee id')
 
         finally:
             self.close_connection(cursor, connection)

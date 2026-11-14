@@ -16,18 +16,24 @@ A running record of completed features, improvements, and next steps for the Min
 - [x] Removed the module-level database connection so importing the utility module does not connect automatically.
 - [x] Added handling for unavailable database connections.
 - [x] Added menu input validation for non-integer input and invalid choices.
+- [x] Added reusable validation for blank employee text fields.
+- [x] Applied blank-field validation to employee creation and updates.
+- [x] Added reusable employee ID validation that rejects non-numeric, zero, and negative IDs.
+- [x] Applied positive ID validation to employee update, deletion, and search.
 - [x] Added `pytest` as a development dependency.
 - [x] Added automated tests using mocked database connections.
 - [x] Added tests for create, read, update, delete, search, not-found behavior, menu dispatch, and unavailable database handling.
+- [x] Added a test confirming blank and whitespace-only employee text input is rejected.
+- [x] Added a test confirming non-numeric, zero, and negative employee IDs are rejected.
+- [x] Added a test for update-not-found behavior.
 - [x] Refactored the employee controller to reuse connection, cleanup, and employee-display methods.
-- [x] Verified the test suite: **11 tests passed** using `uv run python -m pytest -v`.
+- [x] Improved README setup, database configuration, and test instructions.
+- [x] Verified the complete test suite: **14 tests passed** using `uv run python -m pytest -v`.
 
 ### Pending Improvements
-- [ ] Add tests for update-not-found and invalid employee IDs.
 - [ ] Add tests for database errors during SQL execution.
-- [ ] Validate blank employee fields and non-positive IDs.
-- [ ] Improve README setup, database configuration, and test instructions.
 - [ ] Consider integration tests using a separate test database.
+- [ ] Review the feature branch and open a pull request into `main`.
 
 ## Progress Log
 
@@ -43,6 +49,8 @@ A running record of completed features, improvements, and next steps for the Min
 | 10 Nov 2026 | Added menu input validation and introduced `pytest` for automated testing. |
 | 11 Nov 2026 | Expanded the automated test suite to 11 tests covering CRUD operations, search, and not-found cases. |
 | 11 Nov 2026 | Refactored the controller to reuse database connection, resource cleanup, and employee display methods. All 11 tests passed. |
+| 12 Nov 2026 | Added reusable validation for blank employee fields and positive employee IDs. Applied it to create, update, delete, and search operations. Existing test suite passed: 11 tests. |
+| 13 Nov 2026 | Added dedicated tests for blank/whitespace-only text input, invalid employee IDs, and update-not-found behavior. Full test suite passed: 14 tests. Committed and pushed the test updates to `feature/employee-input-validation`. |
 
 ## Notes
 
